@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/app/core/database/sqlite_adm_connection.dart';
+import 'package:todo_list_app/app/modules/auth/auth_module.dart';
 import 'package:todo_list_app/app/modules/splash/splash_page.dart';
 
 class AppWidget extends StatefulWidget {
@@ -26,8 +27,12 @@ class _AppWidgetState extends State<AppWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'ToDo List Provider',
+      initialRoute: '/login',
+      routes: {
+        ...AuthModule().routers
+      },
       home: SplashPage(),
     );
   }
