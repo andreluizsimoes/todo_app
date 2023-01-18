@@ -21,12 +21,12 @@ class UserRepositoryImpl implements UserRepository {
     } on FirebaseAuthException catch (e, s) {
       print(e);
       print(s);
-      if (e.code == 'email-already-exists') {
+      if (e.code == 'email-already-in-use') {
         final loginTypes =
             await _firebaseAuth.fetchSignInMethodsForEmail(email);
         if (loginTypes.contains('password')) {
           throw AuthException(
-              message: 'E-mail já utilizado, por favor escolha outro e-mail');
+              message: 'E-mail já utilizado, por favor escolha outro e-mail!');
         } else {
           throw AuthException(
               message:
