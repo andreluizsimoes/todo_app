@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list_app/app/core/notifier/default_listener_notifier.dart';
+import 'package:todo_list_app/app/core/ui/messages.dart';
 import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
 import 'package:todo_list_app/app/core/validators/validators.dart';
 import 'package:todo_list_app/app/core/widget/todo_list_field.dart';
@@ -31,21 +34,20 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    context.read<RegisterController>().addListener(() {
-      final controller = context.read<RegisterController>();
-      var success = controller.success;
-      var error = controller.error;
-      if (success) {
+    final defaultListener = DefaultListenerNotifier(
+        changeNotifier: context.read<RegisterController>());
+    defaultListener.listener(
+      context: context,
+      successCallback: (notifier, listenerInstance) {
+        listenerInstance.dispose();
         Navigator.of(context).pop();
-      } else if (error != null && error.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
+        Messages.of(context).showSuccess('Cadastro realizado com SUCESSO!');
+      },
+      //! Atributo opcional
+      // errorCallback: (notifier, listenerInstance) {
+      //   print('TESTANDO CHEGADA DE ERRO');
+      // },
+    );
   }
 
   @override

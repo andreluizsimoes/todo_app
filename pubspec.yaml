@@ -43,6 +43,7 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
   validatorless: ^1.2.3
+  flutter_overlay_loader: ^2.0.0
 
 dev_dependencies:
   flutter_test:
