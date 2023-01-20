@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, body_might_complete_normally_nullable
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:todo_list_app/app/exceptions/auth_exception.dart';
 
 import './user_repository.dart';
@@ -35,6 +36,29 @@ class UserRepositoryImpl implements UserRepository {
       } else {
         throw AuthException(message: e.message ?? 'Erro ao registrar usuário!');
       }
+    }
+  }
+
+  @override
+  Future<User?> login(String email, String password) async {
+    try {
+      final userData = await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      return userData.user;
+    } on PlatformException catch (e, s) {
+      print(e);
+      print(s);
+      throw AuthException(message: e.message ?? 'Erro ao realizar o Login!!!');
+    } on FirebaseAuthException catch (e, s) {
+      print(e);
+      print(s);
+      if (e.code == 'wrong-password') {
+        throw AuthException(message: 'Senha Inválida!');
+      } else if (e.code == 'user-not-found') {
+        throw AuthException(message: 'E-mail não cadastrado!');
+      }
+      throw AuthException(message: e.message ?? 'Erro ao realizar o Login!!!');
     }
   }
 }

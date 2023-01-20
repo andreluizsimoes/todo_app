@@ -1,10 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list_app/app/core/notifier/default_listener_notifier.dart';
 import 'package:todo_list_app/app/core/widget/todo_list_field.dart';
 import 'package:todo_list_app/app/core/widget/todo_list_logo.dart';
+import 'package:todo_list_app/app/modules/auth/login/login_controller.dart';
+import 'package:validatorless/validatorless.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailEC = TextEditingController();
+  final _passwordEC = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailEC.dispose();
+    _passwordEC.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DefaultListenerNotifier(changeNotifier: context.read<LoginController>())
+        .listener(
+      context: context,
+      successCallback: (notifier, listenerInstance) {
+        print('Login Efetuado com sucesso!');
+        Navigator.of(context).pushNamed('/splash');
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,44 +61,67 @@ class LoginPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 20),
                       child: Form(
+                          key: _formKey,
                           child: Column(
-                        children: [
-                          TodoListField(
-                            label: 'E-mail',
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TodoListField(
-                            label: 'Senha',
-                            obscureText: true,
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              TextButton(
-                                onPressed: () {},
-                                child: Text('Esqueceu sua senha?'),
+                              TodoListField(
+                                controller: _emailEC,
+                                label: 'E-mail',
+                                validator: Validatorless.multiple([
+                                  Validatorless.required(
+                                      'E-mail é obrigatório!'),
+                                  Validatorless.email('E-mail inválido!')
+                                ]),
                               ),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              TodoListField(
+                                controller: _passwordEC,
+                                label: 'Senha',
+                                validator: Validatorless.multiple([
+                                  Validatorless.required(
+                                      'A senha é obrigatória!'),
+                                  Validatorless.min(6,
+                                      'A senha deve conter pelo menos 6 caracteres!')
+                                ]),
+                                obscureText: true,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text('Esqueceu sua senha?'),
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Text('Login'),
-                                ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      final formValid =
+                                          _formKey.currentState?.validate() ??
+                                              false;
+                                      if (formValid) {
+                                        context.read<LoginController>().login(
+                                            _emailEC.text, _passwordEC.text);
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text('Login'),
+                                    ),
+                                  )
+                                ],
                               )
                             ],
-                          )
-                        ],
-                      )),
+                          )),
                     ),
                     const SizedBox(
                       height: 20,
@@ -93,17 +149,19 @@ class LoginPage extends StatelessWidget {
                                   borderSide: BorderSide.none),
                               onPressed: () {},
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Não tem conta?'),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pushNamed('/register');
-                                    },
-                                    child: Text('Cadastre-se'))
-                              ],
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Não tem conta?'),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pushNamed('/register');
+                                      },
+                                      child: Text('Cadastre-se'))
+                                ],
+                              ),
                             )
                           ],
                         ),
