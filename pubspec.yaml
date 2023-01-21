@@ -44,6 +44,7 @@ dependencies:
   firebase_auth: ^4.2.5
   validatorless: ^1.2.3
   flutter_overlay_loader: ^2.0.0
+  google_sign_in: ^5.4.3
 
 dev_dependencies:
   flutter_test:

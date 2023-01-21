@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todo_list_app/app/exceptions/auth_exception.dart';
 
 import './user_repository.dart';
@@ -60,5 +61,71 @@ class UserRepositoryImpl implements UserRepository {
       }
       throw AuthException(message: e.message ?? 'Erro ao realizar o Login!!!');
     }
+  }
+
+  @override
+  Future<void> forgotPassword(String email) async {
+    try {
+      final loginTypes = await _firebaseAuth.fetchSignInMethodsForEmail(email);
+      if (loginTypes.contains('password')) {
+        await _firebaseAuth.sendPasswordResetEmail(email: email);
+      } else if (loginTypes.contains('google')) {
+        throw AuthException(
+            message:
+                'Cadastro feito com a Conta Google! Não podemos resetar a sua senha!');
+      } else {
+        throw AuthException(message: 'E-mail não cadastrado');
+      }
+    } on PlatformException catch (e, s) {
+      print(e);
+      print(s);
+      throw AuthException(message: 'Erro ao resetar a senha.');
+    }
+  }
+
+  @override
+  Future<User?> googleLogin() async {
+    List<String>? loginTypes;
+    try {
+      final googleSignIn = GoogleSignIn();
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser != null) {
+        loginTypes =
+            await _firebaseAuth.fetchSignInMethodsForEmail(googleUser.email);
+        if (loginTypes.contains('password')) {
+          throw AuthException(
+              message:
+                  'Você já usou esse e-mail para cadastro! Por favor use o link "Esqueci minha senha"');
+        } else {
+          final googleAuth = await googleUser.authentication;
+          final googleCredential = GoogleAuthProvider.credential(
+              accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+
+          var userCredential =
+              await _firebaseAuth.signInWithCredential(googleCredential);
+
+          return userCredential.user;
+        }
+      }
+    } on FirebaseAuthException catch (e, s) {
+      print(e);
+      print(s);
+      if (e.code == 'account-exists-with-different-credential') {
+        throw AuthException(
+            message:
+                '''
+                Login Inválido! Você se registrou no ToDo List usando outro provedor:
+                ${loginTypes?.join(',')}
+                        ''');
+      } else {
+        throw AuthException(message: 'Erro ao realizar login!');
+      }
+    }
+  }
+
+  @override
+  Future<void> googleLogout() async {
+    await GoogleSignIn().signOut();
+    _firebaseAuth.signOut();
   }
 }
