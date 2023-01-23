@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       successCallback: (notifier, listenerInstance) {
-        Navigator.of(context).pushNamed('/splash');
+        // Navigator.of(context).pushNamed('/splash');
       },
     );
   }
