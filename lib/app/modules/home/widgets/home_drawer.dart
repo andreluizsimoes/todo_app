@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:provider/provider.dart';
@@ -55,43 +57,47 @@ class HomeDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            title: Text('Alterar Nome'),
             onTap: () {
               showDialog(
                 context: context,
                 useRootNavigator: false,
-                builder: (_) {
-                  return AlertDialog(
-                    title: Text('Alterar Nome'),
-                    content: TextField(
-                        onChanged: (value) => nameVN.value = value,
-                        decoration: InputDecoration(
-                          labelText: 'Digite o novo nome:',
-                        )),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Cancelar',
-                            style: TextStyle(color: Colors.red),
-                          )),
-                      TextButton(
-                          onPressed: () async {
-                            final nameValue = nameVN.value;
-                            if (nameValue.isNotEmpty) {
-                              await context
-                                  .read<UserService>()
-                                  .updateDisplayName(nameValue);
-                              nameVN.value = '';
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: Text('Alterar')),
-                    ],
+                builder: (BuildContext dialogContext) {
+                  return Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: AlertDialog(
+                      title: Text('Alterar Nome'),
+                      content: TextField(
+                        onChanged: (value) => nameVN.value = value,                        
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(
+                              'Cancelar',
+                              style: TextStyle(color: Colors.red),
+                            )),
+                        TextButton(
+                            onPressed: () async {
+                              final nameValue = nameVN.value;
+                              if (nameValue.isNotEmpty) {
+                                await context
+                                    .read<UserService>()
+                                    .updateDisplayName(nameValue);
+                                nameVN.value = '';
+                                Navigator.of(dialogContext).pop();
+                              } else {
+                                Messages.of(dialogContext).showError(
+                                    'Digite um nome válido!');
+                              }
+                            },
+                            child: Text('Alterar')),
+                      ],
+                    ),
                   );
                 },
               );
             },
-            title: Text('Alterar Nome'),
           ),
           ListTile(
             onTap: () => context.read<AuthProvider>().logout(),
