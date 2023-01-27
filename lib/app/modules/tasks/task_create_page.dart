@@ -80,7 +80,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Criar Atividade',
+                  'Criar Tarefa',
                   style: context.titleStyle.copyWith(fontSize: 20),
                 ),
               ),

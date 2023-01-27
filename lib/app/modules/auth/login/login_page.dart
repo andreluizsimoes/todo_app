@@ -177,23 +177,21 @@ class _LoginPageState extends State<LoginPage> {
                                 context.read<LoginController>().googleLogin();
                               },
                             ),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Não tem conta?'),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed('/register');
-                                      },
-                                      child: Text(
-                                        'Cadastre-se',
-                                        style: TextStyle(
-                                            color: context.primaryColor),
-                                      ))
-                                ],
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Não tem conta?'),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pushNamed('/register');
+                                    },
+                                    child: Text(
+                                      'Cadastre-se',
+                                      style: TextStyle(
+                                          color: context.primaryColor),
+                                    ))
+                              ],
                             )
                           ],
                         ),

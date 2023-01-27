@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
+import 'package:todo_list_app/app/core/ui/todo_list_ui_config.dart';
 import 'package:todo_list_app/app/modules/tasks/task_create_controller.dart';
 
 class CalendarButton extends StatelessWidget {
@@ -20,6 +21,16 @@ class CalendarButton extends StatelessWidget {
           initialDate: DateTime.now(),
           firstDate: DateTime(2020),
           lastDate: lastDate,
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: context.primaryColor
+                )
+              ),
+              child: child!,
+            );
+          },
         );
 
         context.read<TaskCreateController>().selectedDate = selectedDate;
