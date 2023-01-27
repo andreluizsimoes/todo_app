@@ -75,4 +75,8 @@ class SqliteConnectionFactory {
   }
 
   Future<void> _onDowngrade(Database db, int oldVerson, int version) async {}
+
+  Future<void> deleteDB() async {
+    _db?.delete('todo');
+  }
 }

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_list_app/app/core/auth/auth_provider.dart';
 import 'package:todo_list_app/app/core/ui/messages.dart';
 import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
+import 'package:todo_list_app/app/services/tasks/tasks_service.dart';
 import 'package:todo_list_app/app/services/user/user_service.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -67,7 +68,7 @@ class HomeDrawer extends StatelessWidget {
                     body: AlertDialog(
                       title: Text('Alterar Nome'),
                       content: TextField(
-                        onChanged: (value) => nameVN.value = value,                        
+                        onChanged: (value) => nameVN.value = value,
                       ),
                       actions: [
                         TextButton(
@@ -86,8 +87,8 @@ class HomeDrawer extends StatelessWidget {
                                 nameVN.value = '';
                                 Navigator.of(dialogContext).pop();
                               } else {
-                                Messages.of(dialogContext).showError(
-                                    'Digite um nome válido!');
+                                Messages.of(dialogContext)
+                                    .showError('Digite um nome válido!');
                               }
                             },
                             child: Text('Alterar')),
@@ -99,7 +100,10 @@ class HomeDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            onTap: () => context.read<AuthProvider>().logout(),
+            onTap: () {
+              context.read<TasksService>().deleteAll();
+              context.read<AuthProvider>().logout();
+            },
             title: Text('Sair'),
           ),
         ],
