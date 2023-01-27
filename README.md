@@ -1,17 +1,13 @@
 # todo_list_app
 
-A new Flutter project.
+<br>Lista de Tarefas usando gerenciamento de Estado com Provider, Sqlite arquitetura MVVM.
+<br>Usado Firebase para login/autenticação, via email/senha ou conta do Google.
+<br>Trabalhada a arquitetura de modulos, para separar e facilitar a estrutura do projeto.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+<div align="center">
+<img src="https://user-images.githubusercontent.com/18678939/215140099-cf3b8031-7e56-4452-ba2c-88e9648ac690.gif" height="auto" max-width="100%"/>
+</div>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# todo_app
