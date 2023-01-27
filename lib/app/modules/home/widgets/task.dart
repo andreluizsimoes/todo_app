@@ -1,45 +1,74 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
+import 'package:todo_list_app/app/models/task_model.dart';
+import 'package:todo_list_app/app/modules/home/home_controller.dart';
+
 class Task extends StatelessWidget {
-  const Task({Key? key}) : super(key: key);
+  final TaskModel task;
+  final dateFormat = DateFormat('dd/MM/y');
+
+  Task({Key? key, required this.task}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
+    final controller = context.read<HomeController>();
+    return Dismissible(
+      key: ValueKey<int>(task.id),
+      onDismissed: (direction) {
+        controller.deleteTask(task.id);
+      },
+      background: swipeToDelete(),
+      child: Container(
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: context.primaryColor),
           boxShadow: [
-            BoxShadow(color: Colors.grey),
-          ]),
-      margin: EdgeInsets.symmetric(vertical: 5),
-      child: IntrinsicHeight(
-        child: ListTile(
-          contentPadding: EdgeInsets.all(8),
-          leading: Checkbox(
-            value: true,
-            onChanged: (value) {},
-          ),
-          title: Text(
-            'Descrição da Task',
-            style: TextStyle(
-              decoration: true ? TextDecoration.lineThrough : null,
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 2,
             ),
-          ),
-          subtitle: Text(
-            '23/01/2023',
-            style: TextStyle(
-              decoration: true ? TextDecoration.lineThrough : null,
+          ],
+        ),
+        margin: EdgeInsets.symmetric(vertical: 5),
+        child: IntrinsicHeight(
+          child: ListTile(
+            contentPadding: EdgeInsets.all(8),
+            leading: Checkbox(
+              value: task.finished,
+              onChanged: (value) =>
+                  context.read<HomeController>().chekOrUncheckTask(task),
+              activeColor: context.primaryColor,
             ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(width: 1, color: Colors.grey.shade700),
+            title: Text(
+              task.description,
+              style: TextStyle(
+                height: 1.5,
+                decoration: task.finished ? TextDecoration.lineThrough : null,
+              ),
+            ),
+            subtitle: Text(
+              dateFormat.format(task.dateTime),
+              style: TextStyle(
+                decoration: task.finished ? TextDecoration.lineThrough : null,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+Widget swipeToDelete() => Container(
+      alignment: Alignment.centerRight,
+      margin: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      color: Colors.red,
+      child: Icon(
+        Icons.delete_sweep_rounded,
+        color: Colors.white,
+      ),
+    );

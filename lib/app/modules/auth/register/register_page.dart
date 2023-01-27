@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list_app/app/core/notifier/default_listener_notifier.dart';
@@ -40,8 +39,10 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       successCallback: (notifier, listenerInstance) {
         listenerInstance.dispose();
-        Navigator.of(context).pop();
-        Messages.of(context).showSuccess('Cadastro realizado com SUCESSO!');
+        //! Pop removido devido a alterações de navegação do AuthProvider
+        // Navigator.of(context).pop();
+        Messages.of(context).showSuccess(
+            'SEJA BEM VINDO!\n TUDO PRONTO PARA GERENCIAR AS SUAS ATIVIDADES!!!');
       },
       //! Atributo opcional
       // errorCallback: (notifier, listenerInstance) {

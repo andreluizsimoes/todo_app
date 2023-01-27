@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
 import 'package:todo_list_app/app/core/ui/to_do_list_icons.dart';
 
 class TodoListField extends StatelessWidget {
@@ -32,10 +33,16 @@ class TodoListField extends StatelessWidget {
           controller: controller,
           validator: validator,
           focusNode: focusNode,
+          cursorColor: context.primaryColor,
           decoration: InputDecoration(
               labelText: label,
               labelStyle: TextStyle(fontSize: 15, color: Colors.black),
               border: OutlineInputBorder(
+                borderSide: BorderSide(color: context.primaryColor),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: context.primaryColor, width: 2),
                 borderRadius: BorderRadius.circular(30),
               ),
               errorBorder: OutlineInputBorder(
@@ -46,6 +53,7 @@ class TodoListField extends StatelessWidget {
               suffixIcon: suffixIconButton ??
                   (obscureText == true
                       ? IconButton(
+                          color: context.primaryColor,
                           onPressed: () {
                             obscureTextVN.value = !obscureTextVN.value;
                           },

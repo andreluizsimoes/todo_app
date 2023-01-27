@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list_app/app/core/notifier/default_listener_notifier.dart';
 import 'package:todo_list_app/app/core/ui/messages.dart';
+import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
 import 'package:todo_list_app/app/core/widget/todo_list_field.dart';
 import 'package:todo_list_app/app/core/widget/todo_list_logo.dart';
 import 'package:todo_list_app/app/modules/auth/login/login_controller.dart';
@@ -115,7 +118,11 @@ class _LoginPageState extends State<LoginPage> {
                                             .forgotPassword(_emailEC.text);
                                       }
                                     },
-                                    child: Text('Esqueceu sua senha?'),
+                                    child: Text(
+                                      'Esqueceu sua senha?',
+                                      style: TextStyle(
+                                          color: context.primaryColor),
+                                    ),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
@@ -180,7 +187,11 @@ class _LoginPageState extends State<LoginPage> {
                                         Navigator.of(context)
                                             .pushNamed('/register');
                                       },
-                                      child: Text('Cadastre-se'))
+                                      child: Text(
+                                        'Cadastre-se',
+                                        style: TextStyle(
+                                            color: context.primaryColor),
+                                      ))
                                 ],
                               ),
                             )

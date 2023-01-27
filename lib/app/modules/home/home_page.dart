@@ -1,35 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_list_app/app/core/auth/auth_provider.dart';
+import 'package:todo_list_app/app/core/notifier/default_listener_notifier.dart';
 import 'package:todo_list_app/app/core/ui/theme_extensions.dart';
 import 'package:todo_list_app/app/core/ui/to_do_list_icons.dart';
+import 'package:todo_list_app/app/models/task_filter_enum.dart';
+import 'package:todo_list_app/app/modules/home/home_controller.dart';
 import 'package:todo_list_app/app/modules/home/widgets/home_drawer.dart';
 import 'package:todo_list_app/app/modules/home/widgets/home_filters.dart';
 import 'package:todo_list_app/app/modules/home/widgets/home_header.dart';
 import 'package:todo_list_app/app/modules/home/widgets/home_tasks.dart';
 import 'package:todo_list_app/app/modules/home/widgets/home_week_filter.dart';
-import 'package:todo_list_app/app/modules/tasks/task_create_page.dart';
 import 'package:todo_list_app/app/modules/tasks/tasks_module.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  final HomeController _homeController;
+  const HomePage({Key? key, required HomeController homeController})
+      : _homeController = homeController,
+        super(key: key);
 
-  void _goToCreateTask(BuildContext context) {
-    Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: Duration(seconds: 1),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        animation =
-            CurvedAnimation(parent: animation, curve: Curves.easeInQuad);
-        return ScaleTransition(
-          scale: animation,
-          alignment: Alignment.bottomRight,
-          child: child,
-        );
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    DefaultListenerNotifier(changeNotifier: widget._homeController).listener(
+      context: context,
+      successCallback: (notifier, listenerInstance) {
+        listenerInstance.dispose();
       },
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return TasksModule().getPage('/task/create', context);
-      },
-    ));
+    );
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      widget._homeController.loadTotalTasks();
+      widget._homeController.findTasks(filter: TaskFilterEnum.today);
+    });
+  }
+
+  Future<void> _goToCreateTask(BuildContext context) async {
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 600),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          animation =
+              CurvedAnimation(parent: animation, curve: Curves.easeInQuad);
+          return ScaleTransition(
+            scale: animation,
+            alignment: Alignment.bottomRight,
+            child: child,
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return TasksModule().getPage('/task/create', context);
+        },
+      ),
+    );
+    widget._homeController.refreshPage();
   }
 
   @override
@@ -42,8 +68,15 @@ class HomePage extends StatelessWidget {
         actions: [
           PopupMenuButton(
             icon: Icon(ToDoListIcons.filter),
+            onSelected: (value) {
+              widget._homeController.showOrHideFinishedTasks();
+            },
             itemBuilder: (_) => [
-              PopupMenuItem<bool>(child: Text('Mostrar Tarefas concluídas'))
+              PopupMenuItem<bool>(
+                value: true,
+                child: Text(
+                    '${widget._homeController.showFinishedTasks ? 'Esconder' : 'Mostrar'} Tarefas concluídas'),
+              )
             ],
           ),
         ],
@@ -62,19 +95,32 @@ class HomePage extends StatelessWidget {
               constraints: BoxConstraints(
                   minHeight: constraints.maxHeight,
                   minWidth: constraints.maxWidth),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HomeHeader(),
-                      HomeFilters(),
-                      HomeWeekFilter(),
-                      HomeTasks(),
-                    ],
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HomeHeader(),
+                          HomeFilters(),
+                          HomeWeekFilter(),              
+                        ],
+                      ),
+                    ),
+                  ),Container(
+                    margin: EdgeInsets.symmetric(horizontal: 0),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HomeTasks(),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           );

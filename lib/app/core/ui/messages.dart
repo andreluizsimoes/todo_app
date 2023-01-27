@@ -12,13 +12,15 @@ class Messages {
 
   void showError(String message) => _showMessage(message, Colors.red);
   void showInfo(String message) => _showMessage(message, context.primaryColor);
-  void showSuccess(String message) => _showMessage(message, Colors.green);
+  void showSuccess(String message) =>
+      _showMessage(message, context.primaryColor);
 
   void _showMessage(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, textAlign: TextAlign.center),
         backgroundColor: color,
+        duration: Duration(seconds: 3),
       ),
     );
   }

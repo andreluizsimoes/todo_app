@@ -88,10 +88,12 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                 height: 30,
               ),
               TodoListField(
-                label: '',
-                controller: _descriptionEC,
-                validator: Validatorless.required('Descrição é obrigatória!'),
-              ),
+                  label: '',
+                  controller: _descriptionEC,
+                  validator: Validatorless.multiple([
+                    Validatorless.required('Descrição é obrigatória!'),
+                    Validatorless.max(50, 'Máximo de 50 caracteres')
+                  ])),
               const SizedBox(
                 height: 20,
               ),
