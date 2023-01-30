@@ -24,7 +24,10 @@ class Task extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: context.primaryColor),
+          border: Border(
+            bottom: BorderSide(color: context.primaryColor),
+            top: BorderSide(color: context.primaryColor),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey,
@@ -35,27 +38,29 @@ class Task extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 5),
         child: IntrinsicHeight(
           child: ListTile(
-            contentPadding: EdgeInsets.all(8),
-            leading: Checkbox(
-              value: task.finished,
-              onChanged: (value) =>
-                  context.read<HomeController>().chekOrUncheckTask(task),
-              activeColor: context.primaryColor,
-            ),
-            title: Text(
-              task.description,
-              style: TextStyle(
-                height: 1.5,
-                decoration: task.finished ? TextDecoration.lineThrough : null,
+              contentPadding: EdgeInsets.all(8),
+              leading: Checkbox(
+                value: task.finished,
+                onChanged: (value) =>
+                    context.read<HomeController>().chekOrUncheckTask(task),
+                activeColor: context.primaryColor,
               ),
-            ),
-            subtitle: Text(
-              dateFormat.format(task.dateTime),
-              style: TextStyle(
-                decoration: task.finished ? TextDecoration.lineThrough : null,
+              title: Text(
+                task.description,
+                style: TextStyle(
+                  height: 1.5,
+                  decoration: task.finished ? TextDecoration.lineThrough : null,
+                ),
               ),
-            ),
-          ),
+              subtitle: Text(
+                dateFormat.format(task.dateTime),
+                style: TextStyle(
+                  decoration: task.finished ? TextDecoration.lineThrough : null,
+                ),
+              ),
+              trailing: Icon(
+                Icons.delete_sweep_rounded,
+              )),
         ),
       ),
     );
